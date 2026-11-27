@@ -190,14 +190,11 @@
 }
 
 .education-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto;
-  align-items: end;
-  gap: clamp(20px, 4vw, 76px);
   margin-inline: calc(-1 * var(--about-gutter));
   padding: clamp(28px, 3.8vw, 56px) var(--about-gutter);
+  border-block: 1px solid #acb39e;
   color: #101313;
-  background: var(--lime);
+  background: #e2e6d8;
 }
 
 .education-strip h3,
@@ -209,7 +206,21 @@
   text-transform: uppercase;
 }
 
-.education-degree p,
+.education-strip h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3b5030;
+}
+
+.education-strip h3::before {
+  content: "";
+  width: 14px;
+  height: 2px;
+  background: #668238;
+}
+
+.education-degree,
 .education-school p,
 .education-grade strong {
   margin: 0;
@@ -236,9 +247,23 @@
 
 .education-grade strong { white-space: nowrap; }
 
+.education-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(154px, .4fr);
+  align-items: center;
+  gap: 12px clamp(14px, 3vw, 54px);
+  padding-block: 15px;
+}
+
+.education-entry + .education-entry {
+  border-top: 1px solid #19230c55;
+}
+
+.education-entry:last-child { padding-bottom: 0; }
+
 @media (max-width: 800px) {
   .about-grid { grid-template-columns: 1fr; gap: 20px; }
-  .education-strip { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+  .education-entry { grid-template-columns: minmax(0, 1fr) 90px; }
   .education-degree { grid-column: 1 / -1; }
 }
 
