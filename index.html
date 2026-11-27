@@ -1,473 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manish R Shetty</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-    <style>
-        :root {
-            --bg: #060606;
-            --bg-card: #0f0f0f;
-            --surface: rgba(255,255,255,0.025);
-            --border: rgba(255,255,255,0.06);
-            --border-hover: rgba(255,255,255,0.13);
-            --text: #f2f2f2;
-            --text-2: #999;
-            --text-3: #4a4a4a;
-            --blue: #4d8eff;
-            --green: #34d399;
-            --red: #f87171;
-            --purple: #a78bfa;
-            --orange: #fbbf24;
-            --r: 14px;
-            --font-d: 'Space Grotesk', sans-serif;
-            --font-b: 'Inter', sans-serif;
-            --font-m: 'JetBrains Mono', monospace;
-        }
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        html { scrollbar-width:thin; scrollbar-color:#1a1a1a #060606; scroll-behavior:auto; }
-        body { font-family:var(--font-b); background:var(--bg); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
-        a { color:inherit; text-decoration:none; }
-        ::selection { background:var(--blue); color:#fff; }
-
-        /* Smooth page wrapper for GSAP smooth scroll */
-        .page { will-change:transform; }
-
-        /* NAV */
-        nav { position:fixed; top:0; width:100%; z-index:100; padding:22px 52px; display:flex; justify-content:space-between; align-items:center; transition:all .4s cubic-bezier(.16,1,.3,1); }
-        nav.scrolled { padding:14px 52px; background:rgba(6,6,6,.92); backdrop-filter:blur(20px) saturate(180%); border-bottom:1px solid var(--border); }
-        .nav-name { font-family:var(--font-d); font-size:1rem; font-weight:700; letter-spacing:-.3px; }
-        .nav-links { display:flex; gap:28px; align-items:center; }
-        .nav-links a { font-size:.78rem; font-weight:500; color:var(--text-3); transition:color .25s; position:relative; }
-        .nav-links a:hover { color:var(--text-2); }
-        .nav-links a.active { color:var(--text); }
-        .nav-links a.active::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--text); }
-
-        /* HERO */
-        .hero { min-height:100vh; display:grid; grid-template-columns:auto 1fr; align-items:center; padding:0 clamp(36px,9vw,140px); gap:72px; position:relative; overflow:hidden; }
-        .hero::before { content:''; position:absolute; top:-200px; right:-200px; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(77,142,255,.06) 0%,transparent 70%); pointer-events:none; }
-        .hero-img-wrap { opacity:0; }
-        .hero-img { width:260px; height:290px; border-radius:18px; object-fit:cover; border:1px solid var(--border); box-shadow:0 24px 64px rgba(0,0,0,.4); transition:transform .6s cubic-bezier(.16,1,.3,1); }
-        .hero-img:hover { transform:scale(1.02) rotate(-.5deg); }
-        .hero-content { opacity:0; }
-        .hero-tag { font-family:var(--font-m); font-size:.7rem; color:var(--text-3); letter-spacing:2px; text-transform:uppercase; margin-bottom:20px; }
-        .hero-name { font-family:var(--font-d); font-size:clamp(2.6rem,5vw,4.2rem); font-weight:700; letter-spacing:-2px; line-height:1.1; margin-bottom:20px; }
-        .hero-name .highlight { background:linear-gradient(135deg,var(--blue),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .hero-desc { font-size:1rem; color:var(--text-2); line-height:1.75; max-width:420px; margin-bottom:36px; }
-        .hero-links { display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
-        .s-link { display:inline-flex; align-items:center; gap:7px; color:var(--text-3); font-size:.82rem; font-weight:500; padding:8px 14px; border-radius:8px; border:1px solid var(--border); transition:all .25s cubic-bezier(.16,1,.3,1); }
-        .s-link:hover { color:var(--text); border-color:var(--border-hover); transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.3); }
-        .s-link svg { width:15px; height:15px; }
-
-        /* SECTIONS */
-        .sec { padding:110px clamp(36px,9vw,140px); position:relative; }
-        .sec-label { font-family:var(--font-m); font-size:.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-3); margin-bottom:14px; display:flex; align-items:center; gap:10px; }
-        .sec-label::before { content:''; width:20px; height:1px; background:var(--text-3); }
-        .sec-title { font-family:var(--font-d); font-size:clamp(1.7rem,3vw,2.3rem); font-weight:700; letter-spacing:-.8px; margin-bottom:52px; }
-
-        /* SKILLS */
-        .skills-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px; }
-        .skill-group { padding:24px; border-radius:var(--r); background:var(--bg-card); border:1px solid var(--border); opacity:0; transform:translateY(24px); transition:border-color .3s,box-shadow .3s; }
-        .skill-group:hover { border-color:var(--border-hover); box-shadow:0 8px 32px rgba(0,0,0,.3); }
-        .skill-group-title { font-family:var(--font-m); font-size:.65rem; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-3); margin-bottom:14px; }
-        .skill-list { display:flex; flex-wrap:wrap; gap:6px; }
-        .skill-item { font-size:.78rem; padding:5px 12px; border-radius:7px; background:var(--surface); color:var(--text-2); transition:all .2s; cursor:default; }
-        .skill-item:hover { background:rgba(77,142,255,.08); color:var(--text); }
-
-        /* EXPERIENCE */
-        .exp-block { border:1px solid var(--border); border-radius:18px; background:var(--bg-card); padding:44px; opacity:0; transform:translateY(30px); position:relative; overflow:hidden; }
-        .exp-block::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(77,142,255,.3),transparent); }
-        .exp-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
-        .exp-company { font-family:var(--font-d); font-size:1.3rem; font-weight:700; }
-        .exp-date { font-family:var(--font-m); font-size:.7rem; color:var(--text-3); padding:4px 10px; border-radius:6px; background:var(--surface); border:1px solid var(--border); }
-        .exp-role { font-size:.86rem; color:var(--text-2); margin-bottom:16px; }
-        .exp-desc { font-size:.86rem; color:var(--text-2); line-height:1.75; margin-bottom:20px; max-width:640px; }
-        .exp-tools { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:36px; }
-        .tool { font-family:var(--font-m); font-size:.65rem; padding:4px 10px; border-radius:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-2); }
-        .exp-divider { font-family:var(--font-m); font-size:.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-3); margin-bottom:20px; padding-top:28px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
-        .exp-divider::before { content:''; width:12px; height:1px; background:var(--text-3); }
-
-        .xp { padding:28px; border-radius:var(--r); background:rgba(255,255,255,.015); border:1px solid var(--border); margin-bottom:14px; opacity:0; transform:translateY(18px); transition:all .35s cubic-bezier(.16,1,.3,1); }
-        .xp:hover { border-color:var(--border-hover); background:rgba(255,255,255,.025); transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,0,0,.25); }
-        .xp:last-child { margin-bottom:0; }
-        .xp-title { font-family:var(--font-d); font-size:.95rem; font-weight:600; margin-bottom:16px; }
-        .xp-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
-        .xp-col-label { font-family:var(--font-m); font-size:.58rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:7px; font-weight:500; }
-        .xp-col-label.red { color:var(--red); }
-        .xp-col-label.blue { color:var(--blue); }
-        .xp-col-label.green { color:var(--green); }
-        .xp-col-text { font-size:.78rem; color:var(--text-2); line-height:1.65; }
-        .xp-col-text strong { color:var(--text); font-weight:600; }
-
-        /* PROJECTS */
-        .proj-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-        .proj { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px; opacity:0; transform:translateY(24px); transition:all .35s cubic-bezier(.16,1,.3,1); position:relative; overflow:hidden; }
-        .proj::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(77,142,255,.04),transparent 60%); opacity:0; transition:opacity .3s; pointer-events:none; }
-        .proj:hover::before { opacity:1; }
-        .proj:hover { border-color:var(--border-hover); transform:translateY(-3px); box-shadow:0 16px 48px rgba(0,0,0,.3); }
-        .proj-title { font-family:var(--font-d); font-size:1rem; font-weight:600; margin-bottom:10px; }
-        .proj-desc { font-size:.8rem; color:var(--text-2); line-height:1.7; margin-bottom:14px; }
-        .proj-tools { display:flex; gap:5px; flex-wrap:wrap; }
-        .proj-tool { font-family:var(--font-m); font-size:.6rem; padding:3px 8px; border-radius:5px; background:rgba(167,139,250,.08); color:var(--purple); border:1px solid rgba(167,139,250,.15); }
-
-        /* EDUCATION */
-        .edu-list { display:flex; flex-direction:column; gap:12px; }
-        .edu { display:grid; grid-template-columns:1fr auto; align-items:center; padding:24px 28px; border-radius:var(--r); background:var(--bg-card); border:1px solid var(--border); opacity:0; transform:translateY(18px); transition:border-color .3s; }
-        .edu:hover { border-color:var(--border-hover); }
-        .edu-name { font-size:.92rem; font-weight:600; margin-bottom:3px; }
-        .edu-sub { font-size:.78rem; color:var(--text-2); }
-        .edu-score { font-family:var(--font-d); font-size:1.2rem; font-weight:700; text-align:right; }
-        .edu-score-label { font-size:.65rem; color:var(--text-3); text-align:right; }
-
-        /* ACHIEVEMENTS */
-        .ach-list { display:flex; flex-direction:column; gap:12px; }
-        .ach { display:flex; align-items:center; gap:18px; padding:22px 24px; border-radius:var(--r); background:var(--bg-card); border:1px solid var(--border); opacity:0; transform:translateY(18px); transition:border-color .3s; }
-        .ach:hover { border-color:var(--border-hover); }
-        .ach-icon { width:40px; height:40px; border-radius:10px; background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.12); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
-        .ach-text { font-size:.86rem; color:var(--text-2); }
-        .ach-text strong { color:var(--text); }
-
-        /* FOOTER */
-        footer { padding:44px clamp(36px,9vw,140px); border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-        .f-copy { font-size:.72rem; color:var(--text-3); }
-        .f-links { display:flex; gap:18px; }
-        .f-link { display:flex; align-items:center; gap:5px; color:var(--text-3); font-size:.75rem; transition:color .2s; }
-        .f-link:hover { color:var(--text); }
-        .f-link svg { width:14px; height:14px; }
-
-        /* Magnetic button effect */
-        .magnetic { transition:transform .3s cubic-bezier(.16,1,.3,1); }
-
-        /* Scroll progress bar */
-        .scroll-progress { position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--blue),var(--purple)); z-index:200; transform-origin:left; transform:scaleX(0); will-change:transform; }
-
-        /* RESPONSIVE */
-        @media(max-width:900px){
-            .hero { grid-template-columns:1fr; text-align:center; gap:40px; }
-            .hero-img-wrap { order:-1; justify-self:center; }
-            .hero-links { justify-content:center; }
-            .hero-desc { margin:0 auto 36px; }
-            .nav-links { display:none; }
-            .xp-grid { grid-template-columns:1fr; }
-            .proj-grid { grid-template-columns:1fr; }
-            .exp-top { flex-direction:column; gap:8px; }
-            footer { flex-direction:column; gap:16px; }
-        }
-        @media(max-width:600px){
-            .sec { padding:70px 20px; }
-            .exp-block { padding:22px; }
-            .xp { padding:18px; }
-            .hero-img { width:200px; height:220px; }
-            nav { padding:14px 20px; }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d11">
+  <meta name="description" content="Manish R Shetty — product and growth analytics portfolio. Case studies in funnel analysis, cohort retention, KPI design, event instrumentation, and business impact at AppsForBharat and Swiggy Instamart.">
+  <title>Manish R Shetty — Product Thinking × Analytics</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230b0d11'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-weight='900' font-size='24' fill='%23c8ff39'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="profile.jpg" as="image">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <script src="portrait-scene.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scroll-line" aria-hidden="true"></div>
+  <div class="cursor-glow" aria-hidden="true"></div>
 
-<!-- Scroll progress indicator -->
-<div class="scroll-progress" id="scrollProgress"></div>
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Manish R Shetty, back to top"><span class="brand-mark">M<span class="brand-dot">.</span></span><span class="brand-name">MANISH R<br>SHETTY</span></a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="#experience">Experience</a><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a>
+      <a id="resume-download" href="./Manish_R_Shetty_Resume.pdf" download="Manish_R_Shetty_Resume.pdf" aria-label="Download resume (PDF)">Resume</a>
+    </nav>
+    <a class="header-contact magnetic" href="#contact">LET'S TALK <span class="contact-orb" aria-hidden="true">↗</span></a>
+    <button class="menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+    <nav class="mobile-nav" id="mobile-menu" aria-label="Mobile navigation" inert><a href="#experience">Experience</a><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a>
+      <a href="./Manish_R_Shetty_Resume.pdf" data-resume-link download="Manish_R_Shetty_Resume.pdf" aria-label="Download resume (PDF)">Resume</a>
+    </nav>
+  </header>
 
-<!-- NAV -->
-<nav id="nav">
-    <span class="nav-name">Manish Shetty</span>
-    <div class="nav-links">
-        <a href="#skills" data-sec="skills">Skills</a>
-        <a href="#experience" data-sec="experience">Experience</a>
-        <a href="#projects" data-sec="projects">Projects</a>
-        <a href="#education" data-sec="education">Education</a>
-    </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="hero">
-    <!-- Replace src to change photo -->
-    <div class="hero-img-wrap">
-        <img src="profile.jpg" alt="Manish Shetty" class="hero-img">
-    </div>
-    <div class="hero-content">
-        <div class="hero-tag">Business Analyst · Swiggy Instamart</div>
-        <h1 class="hero-name">Manish R<br><span class="highlight">Shetty</span></h1>
-        <p class="hero-desc"><strong>Business Analyst passionate about Product Analytics, Experimentation, and Growth.</strong><br><br>I build measurement frameworks, quantify business impact, and deliver insights that drive product and business decisions.</p>
-        <div class="hero-links">
-            <!-- Resume — change href to update -->
-            <a href="Manishrshetty_resume.pdf" class="s-link magnetic" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Resume</a>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=manishrshetty11@gmail.com" target="_blank" rel="noopener noreferrer" class="s-link magnetic" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</a>
-            <a href="https://www.linkedin.com/in/manish-shetty-7838a02a7" class="s-link magnetic" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
-            <a href="https://github.com/manishrshetty11" class="s-link magnetic" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>GitHub</a>
+  <main id="main">
+    <section class="hero section-shell" aria-labelledby="hero-title">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="eyebrow hero-eyebrow"><span class="pulse-dot"></span> PRODUCT & GROWTH ANALYTICS <span class="eyebrow-divider"></span> BENGALURU, INDIA</p>
+        <h1 id="hero-title" class="hero-title" aria-label="Manish R Shetty"><span class="reveal-line"><span>MANISH <span class="hero-initial">R</span></span></span><span class="reveal-line"><span><em>SHETTY</em><span class="lime-period">.</span></span></span></h1>
+        <div class="hero-bottom">
+          <p class="hero-intro"><strong>Product analyst</strong> working across growth, retention, and measurement at Swiggy Instamart and AppsForBharat.</p>
         </div>
-    </div>
-</section>
-
-<!-- SKILLS -->
-
-<section class="sec" id="skills">
-    <div class="sec-label">Technical Skills</div>
-    <h2 class="sec-title">Tools & Technologies</h2>
-    <div class="skills-grid">
-
-        <div class="skill-group">
-            <div class="skill-group-title">Languages</div>
-            <div class="skill-list">
-                <span class="skill-item">SQL</span>
-                <span class="skill-item">Python</span>
-                <span class="skill-item">DAX</span>
-                <span class="skill-item">MATLAB</span>
-            </div>
-        </div>
-
-        <div class="skill-group">
-            <div class="skill-group-title">Data Platforms</div>
-            <div class="skill-list">
-                <span class="skill-item">Snowflake</span>
-                <span class="skill-item">Databricks</span>
-                <span class="skill-item">PostgreSQL</span>
-                <span class="skill-item">MySQL</span>
-                <span class="skill-item">Apache Airflow</span>
-            </div>
-        </div>
-
-        <div class="skill-group">
-            <div class="skill-group-title">Analytics & BI</div>
-            <div class="skill-list">
-                <span class="skill-item">Power BI</span>
-                <span class="skill-item">Tableau</span>
-                <span class="skill-item">Mixpanel</span>
-                <span class="skill-item">Excel</span>
-                <span class="skill-item">Pandas</span>
-                <span class="skill-item">NumPy</span>
-                <span class="skill-item">Scikit-learn</span>
-                <span class="skill-item">Matplotlib</span>
-                <span class="skill-item">Seaborn</span>
-            </div>
-        </div>
-
-        <div class="skill-group">
-            <div class="skill-group-title">Core Expertise</div>
-            <div class="skill-list">
-                <span class="skill-item">Business Analytics</span>
-                <span class="skill-item">Business Intelligence</span>
-                <span class="skill-item">Product Analytics</span>
-                <span class="skill-item">KPI Design</span>
-                <span class="skill-item">Dashboard Development</span>
-                <span class="skill-item">Data Visualization</span>
-                <span class="skill-item">Data Storytelling</span>
-                <span class="skill-item">Customer Segmentation</span>
-                <span class="skill-item">Cohort Analysis</span>
-                <span class="skill-item">Measurement Frameworks</span>
-                <span class="skill-item">Stakeholder Management</span>
-            </div>
-        </div>
-
-    </div>
-</section>
+      </div>
+      <div class="hero-portrait-wrap">
+        <canvas class="portrait-motion" width="620" height="560" aria-hidden="true"></canvas>
+        <div class="portrait-halo" aria-hidden="true"></div>
+        <div class="portrait-frame"><img src="profile.jpg" alt="Portrait of Manish R Shetty" width="1663" height="1650"><span class="portrait-grain" aria-hidden="true"></span></div>
+      </div>
+    </section>
 
 
-<!-- WORK EXPERIENCE -->
-<section class="sec" id="experience">
-    <div class="sec-label">Experience</div>
-    <h2 class="sec-title">Professional Experience</h2>
-    <div class="exp-block">
-        <div class="exp-top">
-            <div>
-                <div class="exp-company">Swiggy Instamart</div>
-                <div class="exp-role">Business Analyst Intern · Bangalore</div>
-            </div>
-            <div class="exp-date">Feb 2026 — Aug 2026</div>
-        </div>
-        <p class="exp-desc">Built analytics infrastructure for the Differentiated Assortment (DA) program — 5,000+ exclusive SKUs. Designed incrementality measurement, retention inflection analysis, and dashboards used in weekly business reviews.</p>
-        <div class="exp-tools">
-            <span class="tool">Snowflake SQL</span>
-            <span class="tool">Apache Airflow</span>
-            <span class="tool">Power BI</span>
-            <span class="tool">Python</span>
-            <span class="tool">Excel</span>
-        </div>
-        <div class="exp-divider">Key Projects</div>
-        <!-- Copy .xp block to add more -->
-        <div class="xp">
-            <div class="xp-title">DA Inflection & Retention Analysis</div>
-            <div class="xp-grid">
-                <div><div class="xp-col-label red">Problem</div><div class="xp-col-text">No visibility into where DA drove retention — CRM targeting undefined across <strong>1M+ customers</strong> and <strong>6 segments</strong>.</div></div>
-                <div><div class="xp-col-label blue">Analysis</div><div class="xp-col-text">Consecutive DA order cohort analysis across 6 lifecycle segments; 30-day retention tracked across <strong>8 consecutive orders</strong>, validated over two 30-day windows.</div></div>
-                <div><div class="xp-col-label green">Impact</div><div class="xp-col-text"><strong>+6.5pp</strong> retention in first 5 orders; <strong>80%</strong> never reach 2nd DA order — those who do jump <strong>+12.6pp</strong>; dormant users stabilise at order 3 (<strong>52%→75.5%</strong>); CRM playbook for <strong>158K users</strong>.</div></div>
-            </div>
-        </div>
-        <div class="xp">
-            <div class="xp-title">IOPD Measurement Framework</div>
-            <div class="xp-grid">
-                <div><div class="xp-col-label red">Problem</div><div class="xp-col-text">Couldn't tell if DA generated <strong>net-new orders</strong> or cannibalized existing — investment case needed incrementality proof.</div></div>
-                <div><div class="xp-col-label blue">Analysis</div><div class="xp-col-text">Segmented <strong>10M+</strong> users into 3 behavioral groups across <strong>6 cohorts</strong>; causal additive decomposition with Feb 2026 baseline.</div></div>
-                <div><div class="xp-col-label green">Impact</div><div class="xp-col-text">DA drives <strong>14,338 incremental orders/day</strong> — 78% new buyer conversion, 22% behavioral lift. First data-backed ROI.</div></div>
-            </div>
-        </div>
-        <div class="xp">
-            <div class="xp-title">DA Performance Dashboard</div>
-            <div class="xp-grid">
-                <div><div class="xp-col-label red">Problem</div><div class="xp-col-text"><strong>~5,000 SKUs</strong> with no unified tracking for availability, coverage, penetration, orders, AOV, or GSV.</div></div>
-                <div><div class="xp-col-label blue">Analysis</div><div class="xp-col-text">Snowflake pipelines for aggregated fact tables by city and category; automated refresh via <strong>Airflow DAGs</strong>.</div></div>
-                <div><div class="xp-col-label green">Impact</div><div class="xp-col-text"><strong>Power BI dashboard</strong> for weekly category ops — first unified view of DA bet performance.</div></div>
-            </div>
-        </div>
-    </div>
-</section>
+    <section id="experience" class="journey section-shell" aria-labelledby="journey-title">
+      <div class="section-index"><span>WORK EXPERIENCE</span><span>01 / 04</span></div>
+      <div class="experience-head reveal"><h2 id="journey-title">Experience<span class="lime-period">.</span></h2></div>
+      <div class="experience-list">
+        <article class="experience-card reveal">
+          <div class="experience-identity"><span class="timeline-icon appsforbharat"><img src="appsforbharat-logo.svg" alt="" loading="lazy"></span><div><p class="experience-company">AppsForBharat</p><h3>Product Analyst Intern</h3><p class="experience-date">AUG – NOV 2026 · BENGALURU</p></div></div>
+          <div class="experience-content"><ul class="experience-points">
+              <li>Built an hourly Puja scorecard covering <strong>~219K average daily users and 50 daily metrics</strong> by automating eight BigQuery-to-Sheets feeds with Airflow, SQL, and Python.</li>
+              <li>Mapped a <strong>10-step purchase funnel and six retention windows</strong> across four App/Web × Domestic/Global segments to show where Puja users dropped off and returned.</li>
+              <li>Surfaced a <strong>46–71 percentage-point booking-history visit gap</strong> against Chadhava, despite 73–82% of Puja users reaching booking details, by joining app/web events to booking cohorts in BigQuery and Superset.</li>
+              <li>Reported <strong>79.7% video availability and a 14.9% watch rate</strong> by breaking Puja and Chadhava fulfillment into D0, D1, D2, D3+ and pending delivery cohorts.</li>
+              <li>Defined Mixpanel triggers and properties for <strong>three web journeys</strong>—Library, Make Your Own Ritual, and Puja cart—and specified an 11-event cart measurement plan across three experiment variants.</li>
+            </ul><div class="experience-links"><a href="#case-scorecard">Scorecard case ↗</a><a href="#case-reentry">Post-booking case ↗</a></div></div>
+        </article>
+        <article class="experience-card reveal">
+          <div class="experience-identity"><span class="timeline-icon swiggy"><img src="instamart-logo.jpg" alt="" loading="lazy"></span><div><p class="experience-company">Swiggy Instamart</p><h3>Business Analyst Intern</h3><p class="experience-date">FEB – AUG 2026 · BENGALURU</p></div></div>
+          <div class="experience-content"><ul class="experience-points">
+              <li>Delivered the first unified DA dashboard for <strong>nearly 5,000 SKUs</strong> by building Snowflake reporting layers, automating Airflow refreshes, and tracking category input and business metrics in Power BI.</li>
+              <li>Measured <strong>14,338 incremental orders per day</strong> by segmenting 10M+ users across six LTV groups and decomposing DA growth against a February 2026 baseline; 78% came from first-time adoption.</li>
+              <li>Found a <strong>+6.5 percentage-point 30-day retention advantage</strong> within the first five DA orders by analyzing 1M+ customers across consecutive-order cohorts; translated the finding into a CRM targeting playbook for 158K dormant users.</li>
+            </ul><div class="experience-links"><a href="#case-incrementality">Incrementality case ↗</a><a href="#case-retention">Retention case ↗</a></div></div>
+        </article>
+      </div>
+    </section>
 
-<!-- PROJECTS — copy .proj to add more -->
-<section class="sec" id="projects">
-    <div class="sec-label">Projects</div>
-    <h2 class="sec-title">Things I've built</h2>
-    <div class="proj-grid">
-        <div class="proj">
-            <div class="proj-title">Mess Management System</div>
-            <div class="proj-desc">Web platform to digitize meal booking, attendance, and billing. Role-based dashboards for mess managers to reduce food waste through data-driven planning.</div>
-            <div class="proj-tools">
-                <span class="proj-tool">Django</span>
-                <span class="proj-tool">PostgreSQL</span>
-                <span class="proj-tool">Python</span>
-                <span class="proj-tool">HTML/CSS</span>
-            </div>
-        </div>
-        <div class="proj">
-            <div class="proj-title">Automated Question Paper Generator</div>
-            <div class="proj-desc">AI-powered app using Bloom's taxonomy mapping for intelligent paper generation. Reduced creation time from hours to minutes.</div>
-            <div class="proj-tools">
-                <span class="proj-tool">Django</span>
-                <span class="proj-tool">React.js</span>
-                <span class="proj-tool">PostgreSQL</span>
-                <span class="proj-tool">Gemini API</span>
-            </div>
-        </div>
-    </div>
-</section>
+    <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>PRODUCT ANALYTICS <i>✳</i> FUNNEL ANALYSIS <i>✳</i> COHORT & RETENTION <i>✳</i> GROWTH ANALYTICS <i>✳</i> KPI DESIGN <i>✳</i> EVENT INSTRUMENTATION <i>✳</i></span><span>PRODUCT ANALYTICS <i>✳</i> FUNNEL ANALYSIS <i>✳</i> COHORT & RETENTION <i>✳</i> GROWTH ANALYTICS <i>✳</i> KPI DESIGN <i>✳</i> EVENT INSTRUMENTATION <i>✳</i></span></div></div>
 
-<!-- EDUCATION & ACHIEVEMENTS -->
-<section class="sec" id="education">
-    <div class="sec-label">Education</div>
-    <h2 class="sec-title">Background</h2>
-    <div class="edu-list">
-        <div class="edu"><div><div class="edu-name">R. V. College of Engineering, Bangalore</div><div class="edu-sub">B.E Electronics & Communication · 2022—2026</div></div><div><div class="edu-score">8.71</div><div class="edu-score-label">CGPA</div></div></div>
-        <div class="edu"><div><div class="edu-name">Sharada Vidhyanikethan P U College</div><div class="edu-sub">Class XII · Karnataka Board · 2022</div></div><div><div class="edu-score">95.3%</div><div class="edu-score-label">Percentage</div></div></div>
-        <div class="edu"><div><div class="edu-name">Achiever's Academy</div><div class="edu-sub">Class X · CBSE · 2020</div></div><div><div class="edu-score">85.4%</div><div class="edu-score-label">Percentage</div></div></div>
-    </div>
-    <h2 class="sec-title" style="margin-top:72px;margin-bottom:28px;">Achievements</h2>
-    <div class="ach-list">
-        <div class="ach"><div class="ach-icon">🏆</div><div class="ach-text">Secured <strong>Rank 1737</strong> out of 2.17 Lakh candidates in KCET 2022</div></div>
-        <div class="ach"><div class="ach-icon">🎯</div><div class="ach-text">Secured <strong>95.15 percentile</strong> in JEE Mains 2022 among 10.26 Lakh candidates</div></div>
-    </div>
-</section>
+    <section id="work" class="work section-shell" aria-labelledby="work-title">
+      <div class="section-index"><span>SELECTED WORK</span><span>02 / 04</span></div>
+      <div class="section-head reveal"><div><h2 id="work-title">Selected <em>work.</em></h2></div></div>
 
-<!-- FOOTER -->
-<footer>
-    <span class="f-copy">Manish R Shetty · 2026</span>
-    <div class="f-links">
-        <a href="Manishrshetty_resume.pdf" class="f-link" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Resume</a>
-        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=manishrshetty11@gmail.com" target="_blank" rel="noopener noreferrer" class="f-link" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</a>
-        <a href="https://www.linkedin.com/in/manish-shetty-7838a02a7" class="f-link" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
-        <a href="https://github.com/manishrshetty11" class="f-link" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>GitHub</a>
-    </div>
-</footer>
+      <div class="project-stack">
+        <article class="project-card project-violet reveal" id="case-reentry">
+          <div class="project-meta"><span>01 / CUSTOMER EXPERIENCE</span><span>APPSFORBHARAT · 2026</span></div>
+          <div class="project-body"><div class="project-copy"><h3>Puja re-entry<br><em>gap.</em></h3><p>Surfaced a <strong>46–71 percentage-point booking-history visit gap</strong> for Puja versus Chadhava, even as 73–82% of Puja users reached booking details, by linking app/web events to booking cohorts in BigQuery and Superset.</p><div class="project-tags"><span>BIGQUERY</span><span>SUPERSET</span><span>PRODUCT FUNNEL</span></div></div><div class="project-art art-journey" aria-label="Puja booking-history list visits trailed Chadhava by 46 to 71 percentage points while 73 to 82 percent reached booking details"><div class="journey-art-top">BOOKING-HISTORY RE-ENTRY</div><div class="journey-metric">46–71<span>pp</span></div><div class="journey-metric-label">LOWER BOOKING-HISTORY LIST VISITS<br>VS CHADHAVA</div><div class="journey-path" aria-hidden="true"><span>BOOKING</span><b></b><span>DETAILS</span><b></b><span>HISTORY</span></div><div class="journey-art-bottom"><strong>73–82%</strong><span>REACHED BOOKING DETAILS</span></div></div></div>
+                    <details class="case-details"><summary>Read the post-booking case <span aria-hidden="true">+</span></summary><div class="case-expanded"><div><span>PROBLEM</span><p>Booking details were reachable, but the path back through booking history looked unusually weak for Puja users. The team needed to know whether this was a re-entry friction signal.</p></div><div><span>METHOD & EVIDENCE</span><p>Linked app/web events to booking cohorts in BigQuery and Superset. The booking-history list visit rate trailed Chadhava by 46–71 percentage points, while 73–82% of Puja users still reached booking details.</p></div><div><span>DECISION & NEXT TEST</span><p>Informed a CRM deep-link review. A next experiment would compare direct booking-detail links with the current route on revisit and repeat-booking behavior; no uplift is claimed here.</p></div></div></details>
+        </article>
 
-<script>
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+        <article class="project-card project-lime reveal" id="case-incrementality">
+          <div class="project-meta"><span>02 / GROWTH MEASUREMENT</span><span>SWIGGY INSTAMART · 2026</span></div>
+          <div class="project-body"><div class="project-copy"><h3>DA <em>incrementality.</em></h3><p>Quantified DA’s incremental demand at <strong>14,338 additional orders per day</strong> by segmenting 10M+ users into adoption cohorts and applying causal additive decomposition against a pre-program baseline.</p><div class="project-tags"><span>SNOWFLAKE SQL</span><span>COHORTS</span><span>CAUSAL DECOMPOSITION</span></div></div><div class="project-art art-incrementality" aria-label="14,338 incremental orders per day; 78 percent from first-time adoption and 22 percent from behavioral lift"><div class="art-topline"><span>DA ORDER IMPACT</span><span>↗ 2026</span></div><div class="big-stat" data-count="14338" data-format="comma">14,338</div><span class="stat-sub">INCREMENTAL ORDERS / DAY</span><div class="ratio-bar"><div class="ratio-first"></div><div class="ratio-second"></div></div><div class="ratio-labels"><span>78% FIRST-TIME ADOPTION</span><span>22% BEHAVIORAL LIFT</span></div></div></div>
+                    <details class="case-details"><summary>Read the incrementality case <span aria-hidden="true">+</span></summary><div class="case-expanded"><div><span>PROBLEM</span><p>DA was growing GSV, but leadership needed to distinguish genuinely incremental orders from existing customers shifting what they bought.</p></div><div><span>METHOD & EVIDENCE</span><p>Segmented 10M+ users into Non-DA, first-time DA, and repeat DA groups across six lifetime-value segments. Applied causal additive decomposition using February 2026 as the pre-program baseline.</p></div><div><span>DECISION & NEXT TEST</span><p>Quantified 14,338 incremental orders/day: 78% from first-time adoption and 22% from behavioral lift. The framework gave leadership an investment lens; a future holdout would sharpen the causal estimate.</p></div></div></details>
+        </article>
 
-// Scroll progress bar
-gsap.to('#scrollProgress', {
-    scaleX: 1,
-    ease: 'none',
-    scrollTrigger: { trigger: 'body', start: 'top top', end: 'bottom bottom', scrub: 0.3 }
-});
+        <article class="project-card project-peach reveal" id="case-retention">
+          <div class="project-meta"><span>03 / RETENTION STRATEGY</span><span>SWIGGY INSTAMART · 2026</span></div>
+          <div class="project-body"><div class="project-copy"><h3>Early-order<br><em>retention.</em></h3><p>Identified a <strong>+6.5 percentage-point retention advantage</strong> within the first five consecutive DA orders by measuring 30-day retention across up to eight order cohorts and validating two monthly cohorts.</p><div class="project-tags"><span>SNOWFLAKE SQL</span><span>LIFECYCLE ANALYSIS</span><span>CRM</span></div></div><div class="project-art art-retention" aria-label="A 6.5 percentage point retention advantage existed within the first five consecutive DA orders"><div class="retention-label">RETENTION BY ORDER NUMBER</div><div class="retention-number">+6.5<span>pp</span></div><p>Retention advantage within the first five consecutive DA orders.</p><div class="retention-steps" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span class="muted">06</span><span class="muted">07</span><span class="muted">08</span></div><div class="retention-note">EARLY BEHAVIOR → TARGETED ACTION</div></div></div>
+                    <details class="case-details"><summary>Read the retention case <span aria-hidden="true">+</span></summary><div class="case-expanded"><div><span>PROBLEM</span><p>DA’s long-term retention benefit was unclear, so CRM teams lacked a precise moment and audience for intervention.</p></div><div><span>METHOD & EVIDENCE</span><p>Measured 30-day retention across up to eight consecutive DA orders and six lifecycle segments, validating results in two independent monthly cohorts. The +6.5 percentage-point advantage held within the first five orders.</p></div><div><span>DECISION & NEXT TEST</span><p>Translated the finding into a CRM playbook for 158K dormant users. A next step would test targeted messaging against a control group and measure repeat orders and retention.</p></div></div></details>
+        </article>
 
-// Smooth anchor scroll
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => { e.preventDefault(); const t=document.querySelector(a.getAttribute('href')); if(t) gsap.to(window,{scrollTo:{y:t,offsetY:80},duration:1.2,ease:'power4.inOut'}); });
-});
+        <article class="project-card project-blue reveal" id="case-scorecard">
+          <div class="project-meta"><span>04 / PRODUCT INTELLIGENCE</span><span>APPSFORBHARAT · 2026</span></div>
+          <div class="project-body"><div class="project-copy"><h3>Hourly Puja<br><em>scorecard.</em></h3><p>Made Puja performance visible across <strong>~219K average daily users and 50 daily metrics</strong> by building an hourly scorecard and automating eight BigQuery-to-Sheets feeds with Airflow, SQL, and Python.</p><div class="project-tags"><span>BIGQUERY</span><span>AIRFLOW</span><span>PYTHON</span></div></div><div class="project-art art-scorecard" aria-label="Scorecard tracks approximately 219 thousand average daily users across 50 daily metrics"><div class="dashboard-top"><span class="dash-dot"></span><span>PUJA / LIVE SCORECARD</span><span class="dash-lines">≡</span></div><div class="dash-title">Daily performance<br>in one view.</div><div class="dash-chart" aria-hidden="true"><span style="--h:39%"></span><span style="--h:53%"></span><span style="--h:45%"></span><span style="--h:71%"></span><span style="--h:59%"></span><span style="--h:78%"></span><span style="--h:67%"></span><span style="--h:91%"></span><span style="--h:75%"></span><span style="--h:98%"></span></div><div class="dash-stat"><div><strong>~219K</strong><span>AVG. DAILY USERS TRACKED</span></div><div><strong>50</strong><span>DAILY METRICS</span></div></div><span class="dash-disclaimer">ILLUSTRATIVE VISUAL · METRICS FROM RESUME</span></div></div>
+                    <details class="case-details"><summary>Read the scorecard case <span aria-hidden="true">+</span></summary><div class="case-expanded"><div><span>PROBLEM</span><p>Category teams needed a timely shared view of Puja performance, rather than manually stitching together metrics across journeys.</p></div><div><span>METHOD & EVIDENCE</span><p>Designed an hourly scorecard covering roughly 219K average daily users and 50 daily metrics, with eight BigQuery-to-Sheets feeds automated in Airflow, SQL, and Python.</p></div><div><span>DECISION & NEXT TEST</span><p>Enabled consistent category reviews and a common measurement layer. A next iteration could flag anomalous funnel changes for investigation; this visual is illustrative, not a production dashboard.</p></div></div></details>
+        </article>
+      </div>
+    </section>
 
-// Nav background
-window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY>50));
 
-// Nav active state
-const navLinks = document.querySelectorAll('.nav-links a[data-sec]');
-['skills','experience','projects','education'].forEach(id => {
-    const el = document.getElementById(id); if(!el) return;
-    ScrollTrigger.create({ trigger:el, start:'top 40%', end:'bottom 40%', onEnter:()=>setNav(id), onEnterBack:()=>setNav(id) });
-});
-function setNav(id){ navLinks.forEach(l=>l.classList.toggle('active',l.dataset.sec===id)); }
 
-// Hero entrance with stagger
-const heroTl = gsap.timeline({defaults:{ease:'power4.out',duration:1}});
-heroTl
-    .to('.hero-img-wrap',{opacity:1,duration:1.2,delay:.1})
-    .from('.hero-img',{scale:1.1,duration:1.4,ease:'power3.out'},'<')
-    .to('.hero-content',{opacity:1},'<.3')
-    .from('.hero-tag',{y:20,opacity:0,duration:.6},'<.1')
-    .from('.hero-name',{y:40,opacity:0,duration:.8},'<.15')
-    .from('.hero-desc',{y:20,opacity:0,duration:.7},'<.2')
-    .from('.hero-links',{y:20,opacity:0,duration:.7},'<.15');
+    <section id="about" class="about section-shell" aria-labelledby="about-title"><div class="section-index"><span>ABOUT</span><span>03 / 04</span></div><div class="about-grid"><div class="about-left reveal"><h2 id="about-title">About <em>me.</em></h2><p>I work with product and category teams to define metrics, build reporting, and use funnel and cohort analysis to guide decisions.</p><a class="text-link" href="#contact">Start a conversation <span aria-hidden="true">↗</span></a></div><div class="about-right reveal"><div class="toolbox"><div class="toolbox-title"><span>MY TOOLKIT</span><span>↘</span></div><div class="tool-row"><span>01 / QUERY & MODEL</span><strong>SQL · BigQuery · Snowflake · PostgreSQL</strong></div><div class="tool-row"><span>02 / BUILD & AUTOMATE</span><strong>Python · Airflow · Pandas · Git</strong></div><div class="tool-row"><span>03 / ANALYZE & EXPLAIN</span><strong>Mixpanel · Power BI · Superset · Metabase</strong></div><div class="tool-row"><span>04 / PRODUCT LENS</span><strong>Funnels · Cohorts · Retention · Prioritization</strong></div></div><div class="education-card"><span>EDUCATION</span><strong>B.E. Electronics & Communication</strong><span>R. V. College of Engineering, Bengaluru · 2026</span><span>CGPA 8.76 / 10</span></div></div></div><div class="side-project reveal"><div class="side-project-main"><span>INDEPENDENT BUILD / 2025</span><h3>Mess Management System</h3><p>Modeled <strong>~85% less monthly bill-preparation time</strong> for a 100-resident mess by generating attendance-based bills in a Django/PostgreSQL system instead of calculating each resident’s bill manually. The same platform connects meal booking, payment tracking, and daily kitchen headcounts through role-based dashboards.</p><div class="side-project-tags"><span>DJANGO</span><span>POSTGRESQL</span><span>PYTHON</span></div><p class="estimate-note"><strong>Illustrative model, not a measured deployment result:</strong> 100 bills × 2 minutes of manual preparation = 200 minutes; 30 minutes to review the generated batch = 170 minutes saved (85%).</p></div></div></section>
 
-// Magnetic button effect
-document.querySelectorAll('.magnetic').forEach(btn => {
-    btn.addEventListener('mousemove', e => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width/2;
-        const y = e.clientY - rect.top - rect.height/2;
-        gsap.to(btn, {x: x*.2, y: y*.2, duration:.3, ease:'power2.out'});
-    });
-    btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, {x:0, y:0, duration:.5, ease:'elastic.out(1,.4)'});
-    });
-});
-
-// Project card mouse glow tracking
-document.querySelectorAll('.proj').forEach(card => {
-    card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--mx', ((e.clientX-rect.left)/rect.width*100)+'%');
-        card.style.setProperty('--my', ((e.clientY-rect.top)/rect.height*100)+'%');
-    });
-});
-
-// Scroll reveal helper
-function reveal(sel, stagger=.1) {
-    document.querySelectorAll(sel).forEach((el,i) => {
-        gsap.to(el, {
-            opacity:1, y:0, duration:.8, delay:i*stagger,
-            ease:'power3.out',
-            scrollTrigger:{ trigger:el, start:'top 86%', toggleActions:'play none none none' }
-        });
-    });
-}
-reveal('.skill-group', .08);
-reveal('.xp', .12);
-reveal('.proj', .12);
-reveal('.edu', .08);
-reveal('.ach', .1);
-
-// Experience block
-gsap.to('.exp-block', {
-    opacity:1, y:0, duration:.9, ease:'power3.out',
-    scrollTrigger:{ trigger:'.exp-block', start:'top 80%' }
-});
-
-// Section labels and titles — parallax-style entrance
-document.querySelectorAll('.sec-label,.sec-title').forEach(el => {
-    gsap.from(el, {
-        opacity:0, y:30, duration:.8, ease:'power3.out',
-        scrollTrigger:{ trigger:el, start:'top 88%' }
-    });
-});
-
-// Parallax on hero image (subtle)
-gsap.to('.hero-img', {
-    yPercent: 8,
-    ease: 'none',
-    scrollTrigger: { trigger:'.hero', start:'top top', end:'bottom top', scrub:1.5 }
-});
-</script>
-
+    <section id="contact" class="contact section-shell" aria-labelledby="contact-title"><div class="section-index"><span>CONTACT</span><span>04 / 04</span></div><div class="contact-core"><h2 id="contact-title" class="reveal">LET’S<br><em>TALK.</em></h2><a class="contact-email magnetic" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=manishrshetty11@gmail.com" target="_blank" rel="noopener noreferrer" title="Compose in Gmail"><svg class="contact-icon email-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="contact-email-address">manishrshetty11@gmail.com</span><span class="external-arrow" aria-hidden="true">↗</span></a><p>Open to product analytics, growth analytics, and product management roles.</p></div><footer class="footer"><div class="footer-top"><span>MANISH R SHETTY / © 2026</span><a href="#top">BACK TO TOP ↑</a></div><div class="footer-links"><a href="https://www.linkedin.com/in/manish-shetty-7838a02a7/" target="_blank" rel="noopener noreferrer"><svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5.5 9v11H2V9h3.5ZM9 9h3.3v1.6c.7-1.1 1.9-1.9 3.6-1.9 3.4 0 4.6 2.2 4.6 5.1V20H17v-5.5c0-1.6-.6-2.6-2-2.6-1.5 0-2.5 1-2.5 2.8V20H9V9Z"/><circle cx="3.75" cy="4.7" r="1.75"/></svg>LINKEDIN <span class="external-arrow" aria-hidden="true">↗</span></a><a href="https://github.com/manishrshetty11" target="_blank" rel="noopener noreferrer"><svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 19c-4.3 1.3-4.3-2.1-6-2.5m12 5v-3.2a2.8 2.8 0 0 0-.8-2.2c2.7-.3 5.6-1.4 5.6-6A4.7 4.7 0 0 0 18.5 7a4.3 4.3 0 0 0-.1-3.2s-1-.3-3.4 1.3a12.1 12.1 0 0 0-6 0C6.6 3.5 5.6 3.8 5.6 3.8A4.3 4.3 0 0 0 5.5 7a4.7 4.7 0 0 0-1.3 3.1c0 4.6 2.9 5.7 5.6 6a2.8 2.8 0 0 0-.8 2.2v3.2"/></svg>GITHUB <span class="external-arrow" aria-hidden="true">↗</span></a><a href="./Manish_R_Shetty_Resume.pdf" data-resume-link download="Manish_R_Shetty_Resume.pdf" aria-label="Download resume (PDF)">RESUME <span class="external-arrow" aria-hidden="true">↓</span></a></div></footer></section>
+  </main>
 </body>
 </html>
